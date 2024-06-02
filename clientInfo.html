@@ -21,80 +21,51 @@
 <body>
     <div class="container mt-5">
         <h2>Client Information</h2>
-        <p id="clientName"></p>
-        <p id="clientEmail"></p>
-        <p id="clientPhone"></p>
-        <p id="clientAddress"></p>
-        <p id="clientStripeLink"></p>
-        <h3>Service History</h3>
-        <ul id="serviceHistory"></ul>
-        <p id="nextServiceDate"></p>
+        <form id="clientInfoForm">
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" class="form-control" id="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name:</label>
+                <input type="text" class="form-control" id="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="text" class="form-control" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" class="form-control" id="address" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
     </div>
 
-   <script>
+    <script>
         (function () {
             var firebaseConfig = {
                 apiKey: "AIzaSyCkrma8-C8lxKvvD9LJZY-9gQx_nus52GE",
-                authDomain: "lawn-magic-a3c44.firebaseapp.com",
-                projectId: "lawn-magic-a3c44",
-                storageBucket: "lawn-magic-a3c44.appspot.com",
-                messagingSenderId: "207655043153",
-                appId: "1:207655043153:web:033a2b6d24c43f13fdb870"
+        authDomain: "lawn-magic-a3c44.firebaseapp.com",
+        projectId: "lawn-magic-a3c44",
+        storageBucket: "lawn-magic-a3c44.appspot.com",
+        messagingSenderId: "207655043153",
+        appId: "1:207655043153:web:033a2b6d24c43f13fdb870"
             };
             firebase.initializeApp(firebaseConfig);
 
-            const clientName = document.getElementById("clientName");
-            const clientEmail = document.getElementById("clientEmail");
-            const clientPhone = document.getElementById("clientPhone");
-            const clientAddress = document.getElementById("clientAddress");
-            const clientStripeLink = document.getElementById("clientStripeLink");
-            const serviceHistory = document.getElementById("serviceHistory");
-            const nextServiceDate = document.getElementById("nextServiceDate");
+            const clientInfoForm = document.getElementById('clientInfoForm');
 
             firebase.auth().onAuthStateChanged(user => {
                 if (user) {
                     const userId = user.uid;
-
-                    // Fetch user details from Firestore
                     firebase.firestore().collection('users').doc(userId).get().then(doc => {
                         if (doc.exists) {
                             const data = doc.data();
-                            clientName.textContent = `Name: ${data.firstName || 'N/A'} ${data.lastName || 'N/A'}`;
-                            clientEmail.textContent = `Email: ${user.email}`;
-                            clientPhone.textContent = `Phone: ${data.phone || 'N/A'}`;
-                            clientAddress.textContent = `Address: ${data.address || 'N/A'}`;
-                            nextServiceDate.textContent = `Next Service Date: ${data.nextServiceDate || 'N/A'}`;
-
-                            // Fetch service history from Firestore
-                            if (data.serviceHistory) {
-                                const uniqueDates = new Set();
-                                data.serviceHistory.forEach(entry => {
-                                    uniqueDates.add(entry.date);
-                                });
-
-                                // Clear existing service history
-                                serviceHistory.innerHTML = "";
-
-                                // Display only the newest entry for each date
-                                uniqueDates.forEach(date => {
-                                    const newestEntry = data.serviceHistory.find(entry => entry.date === date);
-                                    const li = document.createElement('li');
-                                    li.textContent = `Date: ${newestEntry.date}, Status: ${newestEntry.status}`;
-                                    serviceHistory.appendChild(li);
-                                });
-                            }
-                        } else {
-                            alert("No such document!");
-                        }
-                    }).catch(error => {
-                        console.log("Error getting document:", error);
-                    });
-
-                    // Fetch Stripe link from Firestore
-                    firebase.firestore().collection('customers').doc(userId).get().then(doc => {
-                        if (doc.exists) {
-                            const data = doc.data();
-                            clientStripeLink.textContent = `Stripe Purchase Link: ${data.stripeLink || 'N/A'}`;
+                            document.getElementById('firstName').value = data.firstName || '';
+                            document.getElementById('lastName').value = data.lastName || '';
+                            document.getElementById('phone').value = data.phone || '';
+                            document.getElementById('address').value = data.address || '';
                         } else {
                             alert("No such document!");
                         }
@@ -104,6 +75,29 @@
                 } else {
                     alert("No user is signed in");
                 }
+            });
+
+            clientInfoForm.addEventListener('submit', e => {
+                e.preventDefault();
+
+                const userId = firebase.auth().currentUser.uid;
+                const userRef = firebase.firestore().collection('users').doc(userId);
+
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+
+                userRef.update({
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: phone,
+                    address: address
+                }).then(() => {
+                    alert('Client information updated successfully');
+                }).catch(err => {
+                    alert('Error updating client information: ' + err.message);
+                });
             });
         }());
     </script>

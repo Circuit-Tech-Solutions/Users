@@ -15,28 +15,42 @@
     const btnSignup = document.getElementById("btnSignup");
 
     btnLogin.addEventListener('click', e => {
-        const email = txtEmail.value;
-        const password = txtPassword.value;
+        e.preventDefault(); // Prevent default form submission behavior
+
+        const email = txtEmail.value.trim(); // Trim whitespace from input
+        const password = txtPassword.value.trim();
+
+        if (email === '' || password === '') {
+            alert("Please enter both email and password.");
+            return; // Exit function early if fields are empty
+        }
 
         const auth = firebase.auth();
         auth.signInWithEmailAndPassword(email, password).then(user => {
             alert("Login Successful :)");
             window.location.href = "details.html"; // Redirect to details form
         }).catch(err => {
-            alert(err.message);
+            alert("Login failed: " + err.message);
         });
     });
 
     btnSignup.addEventListener('click', e => {
-        const email = txtEmail.value;
-        const password = txtPassword.value;
+        e.preventDefault(); // Prevent default form submission behavior
+
+        const email = txtEmail.value.trim(); // Trim whitespace from input
+        const password = txtPassword.value.trim();
+
+        if (email === '' || password === '') {
+            alert("Please enter both email and password.");
+            return; // Exit function early if fields are empty
+        }
 
         const auth = firebase.auth();
         auth.createUserWithEmailAndPassword(email, password).then(user => {
             alert("Signup Successful :)");
             window.location.href = "details.html"; // Redirect to details form
         }).catch(err => {
-            alert(err.message);
+            alert("Signup failed: " + err.message);
         });
     });
 }());
