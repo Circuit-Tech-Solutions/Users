@@ -19,7 +19,9 @@
     <title>Client Information</title>
     <link rel="stylesheet" href="stylesheet.css">
   <style>
-    
+    .date{
+      font-size: 80px;
+    }
     .sidebar {
       width: 15%;
       height: 100vh;
@@ -27,9 +29,7 @@
       left: 5vw;
       top: 15vh;
       text-align: left;
-      border-color: blue;
-      border-right: 1px solid #333;
-    }
+ }
     .sidebar-nav a {
       display: block;
       padding: 15px;
@@ -38,7 +38,7 @@
       font-size: 25px;
     }
     .sidebar-nav img{
-     width: 70px;
+     width: 43px;
     }
   
     body{
@@ -83,14 +83,10 @@
       font-size: 24px;
     }
     .service-date h1 {
-      font-size: 18px;
-      text-align: center;
+      font-size: 40px;
+      text-align: left;
     }
-    .section-divider {
-      border-top: 1px solid #333;
-      margin-top: 30px;
-      margin-bottom: 30px;
-    }
+ 
     .history-table {
       background-color: #f8f9fa;
     }
@@ -107,14 +103,12 @@
     .payments-section p {
       font-size: 16px;
     }
-    .match1{
-        padding-bottom: 220px;
-    }
+  
     .Name{
         margin-top: 14px;
     }
     .navbar img {
-      width: 15px;
+      width: 10px;
     }
     @media (max-width: 992px) {
       .sidebar {
@@ -164,17 +158,17 @@
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <img src="lawn-mower.png" class="img-fluid" alt="Service 1"> Subscription
+                <img src="grass.png" class="img-fluid" alt="Service 1"> Subscription
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <img src="raking.png" class="img-fluid" alt="Service 2"> Account
+                <img src="user.png" class="img-fluid" alt="Service 2"> Account
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <img src="raking.png" class="img-fluid" alt="Service 3"> Sign Out
+                <img src="logout.png" class="img-fluid" alt="Service 3"> Sign Out
               </a>
             </li>
           </ul>
@@ -193,11 +187,11 @@
     <div class="col-3">
       <div class="sidebar">
         <div class="sidebar-nav">
-          <a href="#"><img src="lawn-mower.png" class="img-fluid" alt="Service 1">
+          <a href="#"><img src="grass.png" class="img-fluid" alt="Service 1">
             Subscription</a>
-          <a href="#"><img src="raking.png" class="img-fluid" alt="Service 1">
+          <a href="#"><img src="user.png" class="img-fluid" alt="Service 1">
             Account</a>
-        <a href="#"><img src="raking.png" class="img-fluid" alt="Service 1">
+        <a href="#"><img src="logout.png" class="img-fluid" alt="Service 1">
             Sign Out</a>
         </div>
       </div>
@@ -209,9 +203,15 @@
           <div class="content-box">
             <h1 id="clientAddress"></h1>
             <div class="subscription-details">
-              <h1>Basic: <span id="priceFrequency"></span>Monthly</h1>
+              <h1>Basic:</h1>
+              <h5 id="priceFrequency"></h5>
               <div class="divider"></div>
               <button class="btn btn-primary">Change Subscription</button>
+              <div class="payments-section">
+                <h5>Payments</h5>
+                <p>Subscriptions are billed on a monthly basis after your first payment.</p>
+                <button class="btn btn-success" id="customButton">Subscribe</button>
+            </div>
             </div>
           </div>
           
@@ -219,28 +219,20 @@
         <div class="col-md-6">
           <div class="content-box match1">
             <div class="service-date">
-              <h2>Next Service Date</h2>
+              <h2>Your Next Service Date:</h2>
               <h1 id="nextServiceDate"> </h1>
             </div>
           </div>
+            <div class="content-box history-table">
+              <h2>Service History</h2>
+              <ul id="serviceHistory"></ul>
+  
+            </div>
+  
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="content-box history-table">
-            <h2>Service History</h2>
-            <ul id="serviceHistory"></ul>
 
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="payments-section">
-            <h5>Payments</h5>
-            <p>Subscriptions are billed on a monthly basis after your first payment.</p>
-            <button class="btn btn-success" id="customButton">Subscribe</button>
-        </div>
-        </div>
       </div>
+      
     </div>
   </div>
 </div>
@@ -272,8 +264,8 @@
                 firebase.firestore().collection('users').doc(userId).get().then(doc => {
                     if (doc.exists) {
                         const data = doc.data();
-                        clientAddress.textContent = `Address: ${data.address || 'N/A'}`;
-                        nextServiceDate.textContent = `Next Service Date: ${data.nextServiceDate || 'N/A'}`;
+                        clientAddress.textContent = `${data.address || 'N/A'}`;
+                        nextServiceDate.textContent = `${data.nextServiceDate || 'N/A'}`;
                         priceFrequency.textContent = `Price: $${data.price || 'N/A'} / ${data.frequency || 'N/A'}`;
 
                         // Fetch service history from Firestore
